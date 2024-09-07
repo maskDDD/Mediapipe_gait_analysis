@@ -1,1 +1,3 @@
 # PHYNIX_PKNU
+
+feature_extraction제외 정리완료...
