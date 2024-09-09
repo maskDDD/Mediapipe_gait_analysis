@@ -368,6 +368,6 @@ class PREPROCESS():
         marker_cut, markerless_cut = self.marker_markerless_cut(marker, markerless)
         marker_filter, markerless_filter = self.filtering(marker_cut, markerless_cut)
         
-        markerless_filter = abs(1-markerless_filter)
+        
         return marker_filter, markerless_filter
         

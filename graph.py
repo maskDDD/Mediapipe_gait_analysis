@@ -9,6 +9,7 @@ class write_graph():
         if axis == "h": # 높이일 경우
             marker_axis = "z"
             markerless_axis = "y"
+            self.markerless = abs(1-self.markerless)  # 마커리스 축 뒤집기
             
         elif axis == "w": # 너비일 경우
             marker_axis = "y"
