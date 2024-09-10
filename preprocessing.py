@@ -227,7 +227,7 @@ class PREPROCESS():
 
     def get_xyz(self, detection_result):
         res = []
-    
+        
         # 캘리브레이션된 카메라 매트릭스와 왜곡 계수
         ret, camera_matrix, dist_coeffs, rvecs, tvecs = self.calibrating()
 
@@ -258,6 +258,7 @@ class PREPROCESS():
                 res.extend([-10, -10, -10])
 
         return res
+
 
     def draw_landmarks_on_image(self, rgb_image, detection_result): # 랜드마크 보여주는 함수, 굳이?
         pose_landmarks_list = detection_result.pose_landmarks
@@ -389,6 +390,9 @@ class PREPROCESS():
 
         # 각 열에서 모든 값이 -10인 값 제거
         conc = conc[conc.iloc[:,-1]!=-10]
+        
+        # 오차 1행 제거
+        conc = conc.iloc[:-1]
 
         # 마커기반 및 마커리스기반 데이터 분리
         marker = conc.iloc[:, :cut]
@@ -421,7 +425,7 @@ class PREPROCESS():
         
     def make_complite(self):
         marker = self.return_marker_csv()
-        # self.make_markerless_csv()        # markerless csv 만드는 함수, 필요없으면 주석처리하면 됨
+        self.make_markerless_csv()        # markerless csv 만드는 함수, 필요없으면 주석처리하면 됨
         markerless = self.return_markerless_csv()
         
         marker_cut, markerless_cut = self.marker_markerless_cut(marker, markerless)
