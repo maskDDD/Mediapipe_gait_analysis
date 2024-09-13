@@ -202,7 +202,7 @@ class Angle():
 
         # 마커기반 데이터 시각화
         plt.subplot(2, 1, 1)
-        plt.plot(marker_angle["left_shoulder_flexion_2d"], label='Right Knee Flexion (Marker-based)', linestyle='-', alpha=0.7)
+        plt.plot(marker_angle["left_shoulder_flexion_2d"], label='left_shoulder_flexion_2d', linestyle='-', alpha=0.7)
         plt.title("Marker-based Data")
         plt.xlabel("Time")
         plt.ylabel("Flexion Angle")
@@ -211,7 +211,7 @@ class Angle():
 
         # 마커리스기반 데이터 시각화
         plt.subplot(2, 1, 2)
-        plt.plot(markerless_angle["left_shoulder_flexion_2d"], label='Right Knee Flexion (Markerless-based)', linestyle='-', alpha=0.7)
+        plt.plot(markerless_angle["left_shoulder_flexion_2d"], label='left_shoulder_flexion_2d', linestyle='-', alpha=0.7)
         plt.title("Markerless-based Data")
         plt.xlabel("Time")
         plt.ylabel("Flexion Angle")

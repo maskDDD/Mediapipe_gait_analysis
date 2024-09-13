@@ -9,6 +9,7 @@ import cv2
 import os
 import sys
 from scipy.signal import butter, filtfilt
+import csv
 
 points = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28 ,29, 30, 31, 32]
 
@@ -18,8 +19,6 @@ class PREPROCESS():
         self.markerless_filename = markerless_filename
         self.marker_filename = marker_filename
         self.points = points
-        
-        
         
     def return_marker_csv(self):
         # CSV 파일 경로 지정
@@ -182,7 +181,7 @@ class PREPROCESS():
 
         # 열 순서 변경
         marker = marker[new_order]
-        #marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
+        marker=marker.iloc[::2]   # 120fps에서 2frame씩 걸러 입력-> 60fps
         return marker
     
     ### Markerless 처리 ###
@@ -378,22 +377,23 @@ class PREPROCESS():
 
     # 길이 맞추기
     def marker_markerless_cut(self, marker, markerless):
+        # 길이 맞추기
         if marker.shape[0]>=markerless.shape[0]:
             marker=marker.iloc[-markerless.shape[0]:,:]
         else:
-            markerless=markerless.iloc[-marker.shape[0]:,:]
+            markerless=markerless.iloc[:,:marker.shape[0]]
         marker=marker.reset_index(drop=True)
         markerless=markerless.reset_index(drop=True)
         cut=marker.shape[1]
         # 전처리 2 (필요 행 추출)
         # 열 방향으로 데이터 결합
         conc = pd.concat([marker, markerless], axis=1,)
-
+        
+        conc.to_csv("C:\\df\\df.csv")
         # 각 열에서 모든 값이 -10인 값 제거
         conc = conc[conc.iloc[:,-1]!=-10]
         
-        # 오차 1행 제거
-        conc = conc.iloc[:-1]
+
 
         # 마커기반 및 마커리스기반 데이터 분리
         marker = conc.iloc[:, :cut]
@@ -427,13 +427,12 @@ class PREPROCESS():
     # 외부 실행 함수
     def make_complite(self):
         marker = self.return_marker_csv() # marker를 이미 전처리 했기 때문에 주석처리  
-    ### marker를 이미 전처리 했다면, 받아오기만 하는 부분
+        ### marker를 이미 전처리 했다면, 받아오기만 하는 부분
         # # CSV 파일 경로 지정
         # csv_file_path = f"{self.rootPath}{self.marker_filename}"
         # # CSV 파일 읽기
         # marker = pd.read_csv(csv_file_path)
         # marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
-        # print(marker)
         
         # self.make_markerless_csv()        # markerless csv 만드는 함수, 필요없으면 주석처리하면 됨
         markerless = self.return_markerless_csv()
