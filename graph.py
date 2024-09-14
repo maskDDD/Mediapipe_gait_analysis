@@ -119,7 +119,6 @@ class write_graph():
         L_HEEL_EV1_ml_min=L_HEEL_EV1_ml_min+whL[0]+1
         L_HEEL_EV2_ml_min=L_HEEL_EV2_ml_min+whL[1]+1
         
-        self.feature_visualize(L_HEEL_EV1_ml_min, L_HEEL_EV2_ml_min)
          # 마커리스 시각화
         plt.subplot(2, 1, 2)
         plt.plot(self.markerless[self.landmark_markerless_R], label='Original', linestyle='-', alpha=0.7)

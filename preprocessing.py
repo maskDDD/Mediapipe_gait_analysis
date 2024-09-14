@@ -389,12 +389,9 @@ class PREPROCESS():
         # 열 방향으로 데이터 결합
         conc = pd.concat([marker, markerless], axis=1,)
         
-        conc.to_csv("C:\\df\\df.csv")
         # 각 열에서 모든 값이 -10인 값 제거
         conc = conc[conc.iloc[:,-1]!=-10]
         
-
-
         # 마커기반 및 마커리스기반 데이터 분리
         marker = conc.iloc[:, :cut]
         markerless = conc.iloc[:, cut:]
@@ -426,13 +423,13 @@ class PREPROCESS():
         
     # 외부 실행 함수
     def make_complite(self):
-        marker = self.return_marker_csv() # marker를 이미 전처리 했기 때문에 주석처리  
-        ### marker를 이미 전처리 했다면, 받아오기만 하는 부분
-        # # CSV 파일 경로 지정
-        # csv_file_path = f"{self.rootPath}{self.marker_filename}"
-        # # CSV 파일 읽기
-        # marker = pd.read_csv(csv_file_path)
-        # marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
+        # marker = self.return_marker_csv() # marker를 이미 전처리 했기 때문에 주석처리  
+        ## marker를 이미 전처리 했다면, 받아오기만 하는 부분
+        # CSV 파일 경로 지정
+        csv_file_path = f"{self.rootPath}{self.marker_filename}"
+        # CSV 파일 읽기
+        marker = pd.read_csv(csv_file_path)
+        marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
         
         # self.make_markerless_csv()        # markerless csv 만드는 함수, 필요없으면 주석처리하면 됨
         markerless = self.return_markerless_csv()
