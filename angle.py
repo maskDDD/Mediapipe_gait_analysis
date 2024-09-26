@@ -67,19 +67,48 @@ class Angle():
         angle_degrees = math.degrees(angle_radians)
 
         return angle_degrees
-
-    # 각 관절의 2D 및 3D 각도를 계산하는 함수
-    def add_joint_angles_to_data_marker(self, data):
-        # # 3D 관절 각도 계산
-        # data['left_shoulder_flexion_3d'] = data.apply(lambda row: calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
-        #                                                                              [row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
-        #                                                                              [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']]]), axis=1)
+    
+    # marker각 관절의 3D 각도를 계산하는 함수
+    def add_joint_angles_to_data_3d_marker(self, data):
+        # 관절 각도 계산 3D 
+        data['left_shoulder_flexion_3d'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
+                                                                                     [row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
+                                                                                     [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']]]), axis=1)
         
-        # data['right_shoulder_flexion_3d'] = data.apply(lambda row: calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
-        #                                                                               [row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
-        #                                                                               [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']]]), axis=1)
+        data['right_shoulder_flexion_3d'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
+                                                                                      [row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
+                                                                                      [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']]]), axis=1)
         
-        # 2D 관절 각도 계산
+        # 팔꿈치, 무릎 및 엉덩이의 3D 각도 계산
+        data['left_elbow_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
+                                                                            [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']],
+                                                                            [row['L_WRIST_x'], row['L_WRIST_y'], row['L_WRIST_z']]]), axis=1)
+        
+        data['right_elbow_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
+                                                                                [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']],
+                                                                                [row['R_WRIST_x'], row['R_WRIST_y'], row['R_WRIST_z']]]), axis=1)
+        
+        # 무릎 굴곡 각도 계산 3d
+        data['left_knee_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
+                                                                            [row['L_KNEE_x'], row['L_KNEE_y'], row['L_KNEE_z']],
+                                                                            [row['L_ANKLE_x'], row['L_ANKLE_y'], row['L_ANKLE_z']]]), axis=1)
+        
+        data['right_knee_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
+                                                                            [row['R_KNEE_x'], row['R_KNEE_y'], row['R_KNEE_z']],
+                                                                            [row['R_ANKLE_x'], row['R_ANKLE_y'], row['R_ANKLE_z']]]), axis=1)
+        
+        # 엉덩이 굴곡 및 내전 각도 계산 3d
+        data['left_hip_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
+                                                                            [row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
+                                                                            [row['L_KNEE_x'], row['L_KNEE_y'], row['L_KNEE_z']]]), axis=1)
+        
+        data['right_hip_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
+                                                                            [row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
+                                                                            [row['R_KNEE_x'], row['R_KNEE_y'], row['R_KNEE_z']]]), axis=1)
+    
+    # marker각 관절의 2D 각도를 계산하는 함수
+    def add_joint_angles_to_data_2d_marker(self, data):
+        # 어깨 관절 각도 계산 2d
         data['left_shoulder_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_HIP_y'], row['L_HIP_z']],
                                                                                     [row['L_SHOULDER_y'], row['L_SHOULDER_z']],
                                                                                     [row['L_ELBOW_y'], row['L_ELBOW_z']]]), axis=1)
@@ -88,6 +117,43 @@ class Angle():
                                                                                     [row['R_SHOULDER_y'], row['R_SHOULDER_z']],
                                                                                     [row['R_ELBOW_y'], row['R_ELBOW_z']]]), axis=1)
         
+        # 무릎 굴곡 각도 계산 2d
+        data['left_knee_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_HIP_y'], row['L_HIP_z']],
+                                                                            [row['L_KNEE_y'], row['L_KNEE_z']],
+                                                                            [row['L_ANKLE_y'], row['L_ANKLE_z']]]), axis=1)
+        
+        data['right_knee_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_HIP_y'], row['R_HIP_z']],
+                                                                            [row['R_KNEE_y'], row['R_KNEE_z']],
+                                                                            [row['R_ANKLE_y'], row['R_ANKLE_z']]]), axis=1)
+        
+        # 엉덩이 굴곡 및 내전 각도 계산 2d
+        data['left_hip_adduction_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_KNEE_y'], row['L_KNEE_z']],
+                                                                            [row['L_HIP_y'], row['L_HIP_z']],
+                                                                            [(row['L_HIP_y'] + row['R_HIP_y']) / 2, (row['L_HIP_z'] + row['R_HIP_z']) / 2],
+                                                                            [(row['R_SHOULDER_y'] + row['L_SHOULDER_y']) / 2, (row['R_SHOULDER_z'] + row['L_SHOULDER_z']) / 2]]), axis=1)
+        
+        data['right_hip_adduction_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_KNEE_y'], row['R_KNEE_z']],
+                                                                                [row['R_HIP_y'], row['R_HIP_z']],
+                                                                                [(row['L_HIP_y'] + row['R_HIP_y']) / 2, (row['L_HIP_z'] + row['R_HIP_z']) / 2],
+                                                                                [(row['R_SHOULDER_y'] + row['L_SHOULDER_y']) / 2, (row['R_SHOULDER_z'] + row['L_SHOULDER_z']) / 2]]), axis=1)
+
+        # 골반의 리스트 및 회전 측정
+        data['pelvis_list'] = data['R_HIP_y'] - data['L_HIP_y']
+        data['pelvis_rotation'] = data['R_HIP_x'] - data['L_HIP_x']
+        
+        return data
+    
+    # markerless각 관절의 3D 각도를 계산하는 함수
+    def add_joint_angles_to_data_3d_markerless(self, data):
+        # 3D 관절 각도 계산
+        data['left_shoulder_flexion_3d'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
+                                                                                     [row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
+                                                                                     [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']]]), axis=1)
+        
+        data['right_shoulder_flexion_3d'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
+                                                                                      [row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
+                                                                                      [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']]]), axis=1)
+        
         # 팔꿈치, 무릎 및 엉덩이의 3D 각도 계산
         data['left_elbow_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
                                                                             [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']],
@@ -97,16 +163,16 @@ class Angle():
                                                                                 [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']],
                                                                                 [row['R_WRIST_x'], row['R_WRIST_y'], row['R_WRIST_z']]]), axis=1)
         
-        # 3D 무릎 굴곡 각도 계산
-        data['left_knee_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
+         # 3D 무릎 굴곡 각도 계산
+        data['left_knee_flexion_3d'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
                                                                             [row['L_KNEE_x'], row['L_KNEE_y'], row['L_KNEE_z']],
                                                                             [row['L_ANKLE_x'], row['L_ANKLE_y'], row['L_ANKLE_z']]]), axis=1)
         
-        data['right_knee_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
+        data['right_knee_flexion_3d'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
                                                                             [row['R_KNEE_x'], row['R_KNEE_y'], row['R_KNEE_z']],
                                                                             [row['R_ANKLE_x'], row['R_ANKLE_y'], row['R_ANKLE_z']]]), axis=1)
-
-        # 엉덩이 굴곡 및 내전 각도 계산
+        
+        # 엉덩이 굴곡 및 내전 각도 계산 3d
         data['left_hip_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
                                                                             [row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
                                                                             [row['L_KNEE_x'], row['L_KNEE_y'], row['L_KNEE_z']]]), axis=1)
@@ -114,35 +180,11 @@ class Angle():
         data['right_hip_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
                                                                             [row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
                                                                             [row['R_KNEE_x'], row['R_KNEE_y'], row['R_KNEE_z']]]), axis=1)
-        
-        data['left_hip_adduction'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_KNEE_z'], row['L_KNEE_y']],
-                                                                            [row['L_HIP_z'], row['L_HIP_y']],
-                                                                            [(row['L_HIP_z'] + row['R_HIP_z']) / 2, (row['L_HIP_y'] + row['R_HIP_y']) / 2],
-                                                                            [(row['R_SHOULDER_z'] + row['L_SHOULDER_z']) / 2, (row['R_SHOULDER_y'] + row['L_SHOULDER_y']) / 2]]), axis=1)
-        
-        data['right_hip_adduction'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_KNEE_z'], row['R_KNEE_y']],
-                                                                                [row['R_HIP_z'], row['R_HIP_y']],
-                                                                                [(row['L_HIP_z'] + row['R_HIP_z']) / 2, (row['L_HIP_y'] + row['R_HIP_y']) / 2],
-                                                                                [(row['R_SHOULDER_z'] + row['L_SHOULDER_z']) / 2, (row['R_SHOULDER_y'] + row['L_SHOULDER_y']) / 2]]), axis=1)
 
-        # 골반의 리스트 및 회전 측정
-        data['pelvis_list'] = data['R_HIP_y'] - data['L_HIP_y']
-        data['pelvis_rotation'] = data['R_HIP_x'] - data['L_HIP_x']
-        
-        return data
-
-    # 각 관절의 2D 및 3D 각도를 계산하는 함수
-    def add_joint_angles_to_data_markerless(self, data):
-        # # 3D 관절 각도 계산
-        # data['left_shoulder_flexion_3d'] = data.apply(lambda row: calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
-        #                                                                              [row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
-        #                                                                              [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']]]), axis=1)
-        
-        # data['right_shoulder_flexion_3d'] = data.apply(lambda row: calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
-        #                                                                               [row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
-        #                                                                               [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']]]), axis=1)
-        
-        # 2D 관절 각도 계산
+    # markerless각 관절의 2D 각도를 계산하는 함수
+    def add_joint_angles_to_data_2d_markerless(self, data):
+         
+        # 어깨 관절 각도 계산 2d
         data['left_shoulder_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_HIP_x'], row['L_HIP_y']],
                                                                                     [row['L_SHOULDER_x'], row['L_SHOULDER_y']],
                                                                                     [row['L_ELBOW_x'], row['L_ELBOW_y']]]), axis=1)
@@ -150,40 +192,23 @@ class Angle():
         data['right_shoulder_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_HIP_x'], row['R_HIP_y']],
                                                                                     [row['R_SHOULDER_x'], row['R_SHOULDER_y']],
                                                                                     [row['R_ELBOW_x'], row['R_ELBOW_y']]]), axis=1)
-        
-        # 팔꿈치, 무릎 및 엉덩이의 3D 각도 계산
-        data['left_elbow_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
-                                                                            [row['L_ELBOW_x'], row['L_ELBOW_y'], row['L_ELBOW_z']],
-                                                                            [row['L_WRIST_x'], row['L_WRIST_y'], row['L_WRIST_z']]]), axis=1)
-        
-        data['right_elbow_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
-                                                                                [row['R_ELBOW_x'], row['R_ELBOW_y'], row['R_ELBOW_z']],
-                                                                                [row['R_WRIST_x'], row['R_WRIST_y'], row['R_WRIST_z']]]), axis=1)
-        
-        # 3D 무릎 굴곡 각도 계산
-        data['left_knee_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
-                                                                            [row['L_KNEE_x'], row['L_KNEE_y'], row['L_KNEE_z']],
-                                                                            [row['L_ANKLE_x'], row['L_ANKLE_y'], row['L_ANKLE_z']]]), axis=1)
-        
-        data['right_knee_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
-                                                                            [row['R_KNEE_x'], row['R_KNEE_y'], row['R_KNEE_z']],
-                                                                            [row['R_ANKLE_x'], row['R_ANKLE_y'], row['R_ANKLE_z']]]), axis=1)
 
-        # 엉덩이 굴곡 및 내전 각도 계산
-        data['left_hip_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['L_SHOULDER_x'], row['L_SHOULDER_y'], row['L_SHOULDER_z']],
-                                                                            [row['L_HIP_x'], row['L_HIP_y'], row['L_HIP_z']],
-                                                                            [row['L_KNEE_x'], row['L_KNEE_y'], row['L_KNEE_z']]]), axis=1)
+        # 2D 무릎 굴곡 각도 계산
+        data['left_knee_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_HIP_x'], row['L_HIP_y']],
+                                                                            [row['L_KNEE_x'], row['L_KNEE_y']],
+                                                                            [row['L_ANKLE_x'], row['L_ANKLE_y']]]), axis=1)
         
-        data['right_hip_flexion'] = data.apply(lambda row: self.calculate_angle_3d([[row['R_SHOULDER_x'], row['R_SHOULDER_y'], row['R_SHOULDER_z']],
-                                                                            [row['R_HIP_x'], row['R_HIP_y'], row['R_HIP_z']],
-                                                                            [row['R_KNEE_x'], row['R_KNEE_y'], row['R_KNEE_z']]]), axis=1)
+        data['right_knee_flexion_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_HIP_x'], row['R_HIP_y']],
+                                                                            [row['R_KNEE_x'], row['R_KNEE_y']],
+                                                                            [row['R_ANKLE_x'], row['R_ANKLE_y']]]), axis=1)
         
-        data['left_hip_adduction'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_KNEE_x'], row['L_KNEE_y']],
+        # 엉덩이 굴곡 및 내전 각도 계산 2d
+        data['left_hip_adduction_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['L_KNEE_x'], row['L_KNEE_y']],
                                                                             [row['L_HIP_x'], row['L_HIP_y']],
                                                                             [(row['L_HIP_x'] + row['R_HIP_x']) / 2, (row['L_HIP_y'] + row['R_HIP_y']) / 2],
                                                                             [(row['R_SHOULDER_x'] + row['L_SHOULDER_x']) / 2, (row['R_SHOULDER_y'] + row['L_SHOULDER_y']) / 2]]), axis=1)
         
-        data['right_hip_adduction'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_KNEE_x'], row['R_KNEE_y']],
+        data['right_hip_adduction_2d'] = data.apply(lambda row: self.calculate_angle_2d([[row['R_KNEE_x'], row['R_KNEE_y']],
                                                                                 [row['R_HIP_x'], row['R_HIP_y']],
                                                                                 [(row['L_HIP_x'] + row['R_HIP_x']) / 2, (row['L_HIP_y'] + row['R_HIP_y']) / 2],
                                                                                 [(row['R_SHOULDER_x'] + row['L_SHOULDER_x']) / 2, (row['R_SHOULDER_y'] + row['L_SHOULDER_y']) / 2]]), axis=1)
@@ -194,15 +219,21 @@ class Angle():
         
         return data
 
-    def visualize(self):
-        marker_angle=self.add_joint_angles_to_data_marker(self.marker)
-        markerless_angle=self.add_joint_angles_to_data_markerless(self.markerless)
-            # 결과 시각화
+    def visualize(self, object):
+        ## 3d 각도 측정
+        # marker_angle=self.add_joint_angles_to_data_3d_marker(self.marker)
+        # markerless_angle=self.add_joint_angles_to_data_3d_markerless(self.markerless)
+        
+        # 2d 각도 측정
+        marker_angle=self.add_joint_angles_to_data_2d_marker(self.marker)
+        markerless_angle=self.add_joint_angles_to_data_2d_markerless(self.markerless)
+        
+        # 결과 시각화
         plt.figure(figsize=(14, 8))
 
         # 마커기반 데이터 시각화
         plt.subplot(2, 1, 1)
-        plt.plot(marker_angle["left_shoulder_flexion_2d"], label='left_shoulder_flexion_2d', linestyle='-', alpha=0.7)
+        plt.plot(marker_angle[object], label=object, linestyle='-', alpha=0.7)
         plt.title("Marker-based Data")
         plt.xlabel("Time")
         plt.ylabel("Flexion Angle")
@@ -211,7 +242,7 @@ class Angle():
 
         # 마커리스기반 데이터 시각화
         plt.subplot(2, 1, 2)
-        plt.plot(markerless_angle["left_shoulder_flexion_2d"], label='left_shoulder_flexion_2d', linestyle='-', alpha=0.7)
+        plt.plot(markerless_angle[object], label=object, linestyle='-', alpha=0.7)
         plt.title("Markerless-based Data")
         plt.xlabel("Time")
         plt.ylabel("Flexion Angle")
