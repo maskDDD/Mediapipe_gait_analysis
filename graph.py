@@ -10,7 +10,7 @@ class write_graph():
         if axis == "h": # 높이일 경우
             marker_axis = "z"
             markerless_axis = "y"
-            self.markerless = abs(1-self.markerless)  # 마커리스 축 뒤집기
+            self.markerless = abs(1-self.markerless)  # 마커리스 높이 축 뒤집기
             
         elif axis == "w": # 너비일 경우
             marker_axis = "y"
@@ -20,7 +20,7 @@ class write_graph():
         
         self.landmark_marker_R = f"R_{landmark}_{marker_axis}"
         self.landmark_marker_L = f"L_{landmark}_{marker_axis}"
-        self.landmark_markerless_R = f"R_{landmark}_{markerless_axis}"
+        self.landmark_markerless_R = f"R_{landmark}_{markerless_axis}"  # 오류때문에 R,L 뒤집음
         self.landmark_markerless_L= f"L_{landmark}_{markerless_axis}"
 
     def visualize(self):

@@ -180,8 +180,9 @@ class PREPROCESS():
         ]
 
         # 열 순서 변경
+        
         marker = marker[new_order]
-        marker=marker.iloc[::2]   # 120fps에서 2frame씩 걸러 입력-> 60fps
+        marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
         return marker
     
     ### Markerless 처리 ###
@@ -259,7 +260,6 @@ class PREPROCESS():
 
         return res
 
-
     def draw_landmarks_on_image(self, rgb_image, detection_result): # 랜드마크 보여주는 함수, 굳이?
         pose_landmarks_list = detection_result.pose_landmarks
         annotated_image = np.copy(rgb_image)
@@ -283,7 +283,7 @@ class PREPROCESS():
         return annotated_image
     
     def make_markerless_csv(self):
-        # 일괄처리 코드
+        # 디렉토리 영상 일괄처리
         # Create base options for the PoseLandmarker
 
         base_options = python.BaseOptions(model_asset_path=f"{self.rootPath}\\pose_landmarker_heavy.task")
@@ -295,7 +295,7 @@ class PREPROCESS():
 
         # Define input and output directories
         input_dir = f"{self.rootPath}\\markerless_video"
-        output_dir = f"{self.rootPath}\\markerless_raw_csv"
+        output_dir = f"{self.rootPath}\\markerless_raw_csv\\0912_poster\\S001"
 
         # Get all video files in the input directory
         video_files = [f for f in os.listdir(input_dir) if f.endswith(('.mov', '.mp4', '.avi'))]
@@ -334,8 +334,8 @@ class PREPROCESS():
                 rows.append(d)
 
                 # Optional: Visualize landmarks
-                #annotated_frame = self.draw_landmarks_on_image(frame, detection_result)
-                #cv2.imshow('Pose Detection', annotated_frame)   # landmarks 적용 video 보여주는 코드
+                annotated_frame = self.draw_landmarks_on_image(frame, detection_result)
+                cv2.imshow('Pose Detection', annotated_frame)   # landmarks 적용 video 보여주는 코드
 
                 # Check for 'q' key press to exit loop and stop processing
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -378,13 +378,13 @@ class PREPROCESS():
     # 길이 맞추기
     def marker_markerless_cut(self, marker, markerless):
         # 길이 맞추기
-        if marker.shape[0]>=markerless.shape[0]:
-            marker=marker.iloc[-markerless.shape[0]:,:]
+        if marker.shape[0]>=markerless.shape[0]:    # 행 크기 비교
+            marker=marker.iloc[:,:markerless.shape[0]]
         else:
             markerless=markerless.iloc[:,:marker.shape[0]]
         marker=marker.reset_index(drop=True)
         markerless=markerless.reset_index(drop=True)
-        cut=marker.shape[1]
+        cut=marker.shape[1] # 열 크기
         # 전처리 2 (필요 행 추출)
         # 열 방향으로 데이터 결합
         conc = pd.concat([marker, markerless], axis=1,)
@@ -392,8 +392,6 @@ class PREPROCESS():
         conc.to_csv("C:\\df\\df.csv")
         # 각 열에서 모든 값이 -10인 값 제거
         conc = conc[conc.iloc[:,-1]!=-10]
-        
-
 
         # 마커기반 및 마커리스기반 데이터 분리
         marker = conc.iloc[:, :cut]
@@ -426,13 +424,14 @@ class PREPROCESS():
         
     # 외부 실행 함수
     def make_complite(self):
-        marker = self.return_marker_csv() # marker를 이미 전처리 했기 때문에 주석처리  
+        # marker = self.return_marker_csv() # marker를 이미 전처리 했기 때문에 주석처리  
+        
         ### marker를 이미 전처리 했다면, 받아오기만 하는 부분
-        # # CSV 파일 경로 지정
-        # csv_file_path = f"{self.rootPath}{self.marker_filename}"
-        # # CSV 파일 읽기
-        # marker = pd.read_csv(csv_file_path)
-        # marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
+        # CSV 파일 경로 지정
+        csv_file_path = f"{self.rootPath}{self.marker_filename}"
+        # CSV 파일 읽기
+        marker = pd.read_csv(csv_file_path)
+        marker=marker.iloc[::2,:]   # 120fps에서 2frame씩 걸러 입력-> 60fps
         
         # self.make_markerless_csv()        # markerless csv 만드는 함수, 필요없으면 주석처리하면 됨
         markerless = self.return_markerless_csv()
