@@ -6,6 +6,10 @@ mediapipe 추출 정보를 통해 다양한 추가적 보행정보 알고리즘 
 
 With marker information processing mediapipe, you can analyze the range information, assign cluster toe-off, process fluid angle extraction, etc., and make it possible to manage various additional system information through mediapipe extraction information.
 
+finale_main.ipynb가 전체 계산이 전부 들어가 있습니다.
+
+finale_main.ipynb contains all the calculations.
+
 
 마커 y너비, z가 높이
 마커리스x가 너비, y가 높이, z가 깊이(추정치)
